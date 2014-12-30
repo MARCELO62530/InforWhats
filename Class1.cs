@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 namespace InforWhats
 {
     public class Class1
-    {
+    {//
     }
 }
