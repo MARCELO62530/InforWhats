@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using WhatsAppApi.Helper;
 using WhatsAppApi.Response;
 
@@ -13,279 +11,279 @@ namespace WhatsAppApi
         public event ExceptionDelegate OnDisconnect;
         protected void fireOnDisconnect(Exception ex)
         {
-            if (this.OnDisconnect != null)
+            if (OnDisconnect != null)
             {
-                this.OnDisconnect(ex);
+                OnDisconnect(ex);
             }
         }
         
         public event NullDelegate OnConnectSuccess;
         protected void fireOnConnectSuccess() 
         {
-            if (this.OnConnectSuccess != null)
+            if (OnConnectSuccess != null)
             {
-                this.OnConnectSuccess();
+                OnConnectSuccess();
             }
         }
         
         public event ExceptionDelegate OnConnectFailed;
         protected void fireOnConnectFailed(Exception ex) 
         {
-            if (this.OnConnectFailed != null)
+            if (OnConnectFailed != null)
             {
-                this.OnConnectFailed(ex);
+                OnConnectFailed(ex);
             }
         }
 
         public event LoginSuccessDelegate OnLoginSuccess;
         protected void fireOnLoginSuccess(string pn, byte[] data) 
         {
-            if (this.OnLoginSuccess != null)
+            if (OnLoginSuccess != null)
             {
-                this.OnLoginSuccess(pn, data);
+                OnLoginSuccess(pn, data);
             }
         }
 
         public event StringDelegate OnLoginFailed;
         protected void fireOnLoginFailed(string data) 
         {
-            if (this.OnLoginFailed != null)
+            if (OnLoginFailed != null)
             {
-                this.OnLoginFailed(data);
+                OnLoginFailed(data);
             }
         }
 
         public event OnGetMessageDelegate OnGetMessage;
         protected void fireOnGetMessage(ProtocolTreeNode messageNode, string from, string id, string name, string message, bool receipt_sent)
         {
-            if (this.OnGetMessage != null)
+            if (OnGetMessage != null)
             {
-                this.OnGetMessage(messageNode, from, id, name, message, receipt_sent);
+                OnGetMessage(messageNode, from, id, name, message, receipt_sent);
             }
         }
 
         public event OnGetMediaDelegate OnGetMessageImage;
         protected void fireOnGetMessageImage(ProtocolTreeNode mediaNode, string from, string id, string fileName, int fileSize, string url, byte[] preview)
         {
-            if (this.OnGetMessageImage != null)
+            if (OnGetMessageImage != null)
             {
-                this.OnGetMessageImage(mediaNode, from, id, fileName, fileSize, url, preview);
+                OnGetMessageImage(mediaNode, from, id, fileName, fileSize, url, preview);
             }
         }
 
         public event OnGetMediaDelegate OnGetMessageVideo;
         protected void fireOnGetMessageVideo(ProtocolTreeNode mediaNode, string from, string id, string fileName, int fileSize, string url, byte[] preview)
         {
-            if (this.OnGetMessageVideo != null)
+            if (OnGetMessageVideo != null)
             {
-                this.OnGetMessageVideo(mediaNode, from, id, fileName, fileSize, url, preview);
+                OnGetMessageVideo(mediaNode, from, id, fileName, fileSize, url, preview);
             }
         }
 
         public event OnGetMediaDelegate OnGetMessageAudio;
         protected void fireOnGetMessageAudio(ProtocolTreeNode mediaNode, string from, string id, string fileName, int fileSize, string url, byte[] preview)
         {
-            if (this.OnGetMessageAudio != null)
+            if (OnGetMessageAudio != null)
             {
-                this.OnGetMessageAudio(mediaNode, from, id, fileName, fileSize, url, preview);
+                OnGetMessageAudio(mediaNode, from, id, fileName, fileSize, url, preview);
             }
         }
 
         public event OnGetLocationDelegate OnGetMessageLocation;
         protected void fireOnGetMessageLocation(ProtocolTreeNode locationNode, string from, string id, double lon, double lat, string url, string name, byte[] preview)
         {
-            if (this.OnGetMessageLocation != null)
+            if (OnGetMessageLocation != null)
             {
-                this.OnGetMessageLocation(locationNode, from, id, lon, lat, url, name, preview);
+                OnGetMessageLocation(locationNode, from, id, lon, lat, url, name, preview);
             }
         }
 
         public event OnGetVcardDelegate OnGetMessageVcard;
         protected void fireOnGetMessageVcard(ProtocolTreeNode vcardNode, string from, string id, string name, byte[] data)
         {
-            if (this.OnGetMessageVcard != null)
+            if (OnGetMessageVcard != null)
             {
-                this.OnGetMessageVcard(vcardNode, from, id, name, data);
+                OnGetMessageVcard(vcardNode, from, id, name, data);
             }
         }
 
         public event OnErrorDelegate OnError;
         protected void fireOnError(string id, string from, int code, string text)
         {
-            if (this.OnError != null)
+            if (OnError != null)
             {
-                this.OnError(id, from, code, text);
+                OnError(id, from, code, text);
             }
         }
 
         public event OnNotificationPictureDelegate OnNotificationPicture;
         protected void fireOnNotificationPicture(string type, string jid, string id)
         {
-            if (this.OnNotificationPicture != null)
+            if (OnNotificationPicture != null)
             {
-                this.OnNotificationPicture(type, jid, id);
+                OnNotificationPicture(type, jid, id);
             }
         }
 
         public event OnGetMessageReceivedDelegate OnGetMessageReceivedServer;
         protected void fireOnGetMessageReceivedServer(string from, string id)
         {
-            if (this.OnGetMessageReceivedServer != null)
+            if (OnGetMessageReceivedServer != null)
             {
-                this.OnGetMessageReceivedServer(from, id);
+                OnGetMessageReceivedServer(from, id);
             }
         }
 
         public event OnGetMessageReceivedDelegate OnGetMessageReceivedClient;
         protected void fireOnGetMessageReceivedClient(string from, string id)
         {
-            if (this.OnGetMessageReceivedClient != null)
+            if (OnGetMessageReceivedClient != null)
             {
-                this.OnGetMessageReceivedClient(from, id);
+                OnGetMessageReceivedClient(from, id);
             }
         }
 
         public event OnGetPresenceDelegate OnGetPresence;
         protected void fireOnGetPresence(string from, string type)
         {
-            if (this.OnGetPresence != null)
+            if (OnGetPresence != null)
             {
-                this.OnGetPresence(from, type);
+                OnGetPresence(from, type);
             }
         }
 
         public event OnGetGroupParticipantsDelegate OnGetGroupParticipants;
         protected void fireOnGetGroupParticipants(string gjid, string[] jids)
         {
-            if (this.OnGetGroupParticipants != null)
+            if (OnGetGroupParticipants != null)
             {
-                this.OnGetGroupParticipants(gjid, jids);
+                OnGetGroupParticipants(gjid, jids);
             }
         }
 
         public event OnGetLastSeenDelegate OnGetLastSeen;
         protected void fireOnGetLastSeen(string from, DateTime lastSeen)
         {
-            if (this.OnGetLastSeen != null)
+            if (OnGetLastSeen != null)
             {
-                this.OnGetLastSeen(from, lastSeen);
+                OnGetLastSeen(from, lastSeen);
             }
         }
 
         public event OnGetChatStateDelegate OnGetTyping;
         protected void fireOnGetTyping(string from)
         {
-            if (this.OnGetTyping != null)
+            if (OnGetTyping != null)
             {
-                this.OnGetTyping(from);
+                OnGetTyping(from);
             }
         }
 
         public event OnGetChatStateDelegate OnGetPaused;
         protected void fireOnGetPaused(string from)
         {
-            if (this.OnGetPaused != null)
+            if (OnGetPaused != null)
             {
-                this.OnGetPaused(from);
+                OnGetPaused(from);
             }
         }
 
         public event OnGetPictureDelegate OnGetPhoto;
         protected void fireOnGetPhoto(string from, string id, byte[] data)
         {
-            if (this.OnGetPhoto != null)
+            if (OnGetPhoto != null)
             {
-                this.OnGetPhoto(from, id, data);
+                OnGetPhoto(from, id, data);
             }
         }
 
         public event OnGetPictureDelegate OnGetPhotoPreview;
         protected void fireOnGetPhotoPreview(string from, string id, byte[] data)
         {
-            if (this.OnGetPhotoPreview != null)
+            if (OnGetPhotoPreview != null)
             {
-                this.OnGetPhotoPreview(from, id, data);
+                OnGetPhotoPreview(from, id, data);
             }
         }
 
         public event OnGetGroupsDelegate OnGetGroups;
         protected void fireOnGetGroups(WaGroupInfo[] groups)
         {
-            if (this.OnGetGroups != null)
+            if (OnGetGroups != null)
             {
-                this.OnGetGroups(groups);
+                OnGetGroups(groups);
             }
         }
 
         public event OnContactNameDelegate OnGetContactName;
         protected void fireOnGetContactName(string from, string contactName)
         {
-            if (this.OnGetContactName != null)
+            if (OnGetContactName != null)
             {
-                this.OnGetContactName(from, contactName);
+                OnGetContactName(from, contactName);
             }
         }
 
         public event OnGetStatusDelegate OnGetStatus;
         protected void fireOnGetStatus(string from, string type, string name, string status)
         {
-            if (this.OnGetStatus != null)
+            if (OnGetStatus != null)
             {
-                this.OnGetStatus(from, type, name, status);
+                OnGetStatus(from, type, name, status);
             }
         }
 
         public event OnGetSyncResultDelegate OnGetSyncResult;
         protected void fireOnGetSyncResult(int index, string sid, Dictionary<string, string> existingUsers, string[] failedNumbers)
         {
-            if (this.OnGetSyncResult != null)
+            if (OnGetSyncResult != null)
             {
-                this.OnGetSyncResult(index, sid, existingUsers, failedNumbers);
+                OnGetSyncResult(index, sid, existingUsers, failedNumbers);
             }
         }
 
         public event OnGetPrivacySettingsDelegate OnGetPrivacySettings;
         protected void fireOnGetPrivacySettings(Dictionary<VisibilityCategory, VisibilitySetting> settings)
         {
-            if (this.OnGetPrivacySettings != null)
+            if (OnGetPrivacySettings != null)
             {
-                this.OnGetPrivacySettings(settings);
+                OnGetPrivacySettings(settings);
             }
         }
 
         public event OnGetParticipantAddedDelegate OnGetParticipantAdded;
         protected void fireOnGetParticipantAdded(string gjid, string jid, DateTime time)
         {
-            if (this.OnGetParticipantAdded != null)
+            if (OnGetParticipantAdded != null)
             {
-                this.OnGetParticipantAdded(gjid, jid, time);
+                OnGetParticipantAdded(gjid, jid, time);
             }
         }
 
         public event OnGetParticipantRemovedDelegate OnGetParticipantRemoved;
         protected void fireOnGetParticipantRemoved(string gjid, string jid, string author, DateTime time)
         {
-            if (this.OnGetParticipantRemoved != null)
+            if (OnGetParticipantRemoved != null)
             {
-                this.OnGetParticipantRemoved(gjid, jid, author, time);
+                OnGetParticipantRemoved(gjid, jid, author, time);
             }
         }
 
         public event OnGetParticipantRenamedDelegate OnGetParticipantRenamed;
         protected void fireOnGetParticipantRenamed(string gjid, string oldJid, string newJid, DateTime time)
         {
-            if (this.OnGetParticipantRenamed != null)
+            if (OnGetParticipantRenamed != null)
             {
-                this.OnGetParticipantRenamed(gjid, oldJid, newJid, time);
+                OnGetParticipantRenamed(gjid, oldJid, newJid, time);
             }
         }
 
         public event OnGetGroupSubjectDelegate OnGetGroupSubject;
         protected void fireOnGetGroupSubject(string gjid, string jid, string username, string subject, DateTime time)
         {
-            if (this.OnGetGroupSubject != null)
+            if (OnGetGroupSubject != null)
             {
-                this.OnGetGroupSubject(gjid, jid, username, subject, time);
+                OnGetGroupSubject(gjid, jid, username, subject, time);
             }
         }
 

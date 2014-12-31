@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using WhatsAppApi.Helper;
 
 namespace WhatsAppApi.Response
@@ -31,24 +28,24 @@ namespace WhatsAppApi.Response
             if (node != null)
             {
                 int oSize, oWidth, oHeight, oDuration, oAsampfreq, oAbitrate;
-                this.url = node.GetAttribute("url");
-                this.mimetype = node.GetAttribute("mimetype");
+                url = node.GetAttribute("url");
+                mimetype = node.GetAttribute("mimetype");
                 Int32.TryParse(node.GetAttribute("size"), out oSize);
-                this.filehash = node.GetAttribute("filehash");
-                this.type = node.GetAttribute("type");
+                filehash = node.GetAttribute("filehash");
+                type = node.GetAttribute("type");
                 Int32.TryParse(node.GetAttribute("width"), out oWidth);
                 Int32.TryParse(node.GetAttribute("height"), out oHeight);
                 Int32.TryParse(node.GetAttribute("duration"), out oDuration);
-                this.acodec = node.GetAttribute("acodec");
+                acodec = node.GetAttribute("acodec");
                 Int32.TryParse(node.GetAttribute("asampfreq"), out oAsampfreq);
-                this.asampfmt = node.GetAttribute("asampfmt");
+                asampfmt = node.GetAttribute("asampfmt");
                 Int32.TryParse(node.GetAttribute("abitrate"), out oAbitrate);
-                this.size = oSize;
-                this.width = oWidth;
-                this.height = oHeight;
-                this.duration = oDuration;
-                this.asampfreq = oAsampfreq;
-                this.abitrate = oAbitrate;
+                size = oSize;
+                width = oWidth;
+                height = oHeight;
+                duration = oDuration;
+                asampfreq = oAsampfreq;
+                abitrate = oAbitrate;
             }
         }
     }

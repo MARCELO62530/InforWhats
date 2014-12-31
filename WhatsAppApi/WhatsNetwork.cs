@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
+using System.Threading;
 using WhatsAppApi.Helper;
+using WhatsAppApi.Settings;
 
 namespace WhatsAppApi
 {
@@ -45,10 +45,10 @@ namespace WhatsAppApi
         /// <param name="timeout">Timeout for the connection</param>
         public WhatsNetwork(string whatsHost, int port, int timeout = 2000)
         {
-            this.recvTimeout = timeout;
+            recvTimeout = timeout;
             this.whatsHost = whatsHost;
-            this.whatsPort = port;
-            this.incomplete_message = new List<byte>();
+            whatsPort = port;
+            incomplete_message = new List<byte>();
         }
 
         /// <summary>
@@ -57,10 +57,10 @@ namespace WhatsAppApi
         /// <param name="timeout">Timeout for the connection</param>
         public WhatsNetwork(int timeout = 2000)
         {
-            this.recvTimeout = timeout;
-            this.whatsHost = Settings.WhatsConstants.WhatsAppHost;
-            this.whatsPort = Settings.WhatsConstants.WhatsPort;
-            this.incomplete_message = new List<byte>();
+            recvTimeout = timeout;
+            whatsHost = WhatsConstants.WhatsAppHost;
+            whatsPort = WhatsConstants.WhatsPort;
+            incomplete_message = new List<byte>();
         }
         
         /// <summary>
@@ -68,11 +68,11 @@ namespace WhatsAppApi
         /// </summary>
         public void Connect()
         {
-            this.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            this.socket.Connect(this.whatsHost, this.whatsPort);
-            this.socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, this.recvTimeout);
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(whatsHost, whatsPort);
+            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, recvTimeout);
 
-            if (!this.socket.Connected)
+            if (!socket.Connected)
                 throw new ConnectionException("Cannot connect");
         }
 
@@ -81,9 +81,9 @@ namespace WhatsAppApi
         /// </summary>
         public void Disconenct()
         {
-            if (this.socket != null)
+            if (socket != null)
             {
-                this.socket.Close();
+                socket.Close();
             }
         }
 
@@ -116,7 +116,7 @@ namespace WhatsAppApi
 
         public byte[] ReadNextNode()
         {
-            byte[] nodeHeader = this.ReadData(3);
+            byte[] nodeHeader = ReadData(3);
 
             if (nodeHeader == null || nodeHeader.Length == 0)
             {
@@ -129,15 +129,15 @@ namespace WhatsAppApi
                 throw new Exception("Failed to read node header");
             }
             int nodeLength = 0;
-            nodeLength = (int)nodeHeader[1] << 8;
-            nodeLength |= (int)nodeHeader[2] << 0;
+            nodeLength = nodeHeader[1] << 8;
+            nodeLength |= nodeHeader[2] << 0;
 
             //buffered read
             int toRead = nodeLength;
             List<byte> nodeData = new List<byte>();
             do
             {
-                byte[] nodeBuff = this.ReadData(toRead);
+                byte[] nodeBuff = ReadData(toRead);
                 nodeData.AddRange(nodeBuff);
                 toRead -= nodeBuff.Length;
             } while (toRead > 0);
@@ -181,7 +181,7 @@ namespace WhatsAppApi
                 //sleep to prevent CPU intensive loop
                 if (receiveLength <= 0)
                 {
-                    System.Threading.Thread.Sleep(100);
+                    Thread.Sleep(100);
                 }
             } 
             while (receiveLength <= 0);
@@ -201,7 +201,7 @@ namespace WhatsAppApi
         private void Socket_send(string data, int length, int flags)
         {
             var tmpBytes = WhatsApp.SYSEncoding.GetBytes(data);
-            this.socket.Send(tmpBytes);
+            socket.Send(tmpBytes);
         }
 
         /// <summary>
@@ -210,9 +210,9 @@ namespace WhatsAppApi
         /// <param name="data">The data that needs to be send as a byte array</param>
         private void Socket_send(byte[] data)
         {
-            if (this.socket != null && this.socket.Connected)
+            if (socket != null && socket.Connected)
             {
-                this.socket.Send(data);
+                socket.Send(data);
             }
             else
             {

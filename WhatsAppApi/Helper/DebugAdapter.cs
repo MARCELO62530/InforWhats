@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace WhatsAppApi.Helper
+﻿namespace WhatsAppApi.Helper
 {
     public class DebugAdapter
     {
@@ -23,9 +18,9 @@ namespace WhatsAppApi.Helper
         public event OnPrintDebugDelegate OnPrintDebug;
         internal void fireOnPrintDebug(object value)
         {
-            if (this.OnPrintDebug != null)
+            if (OnPrintDebug != null)
             {
-                this.OnPrintDebug(value);
+                OnPrintDebug(value);
             }
         }
 

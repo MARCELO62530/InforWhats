@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using WhatsAppApi.Helper;
-using WhatsAppApi.Parser;
 using WhatsAppApi.Settings;
 
 namespace WhatsAppApi
@@ -28,7 +24,7 @@ namespace WhatsAppApi
         {
             get
             {
-                return this.loginStatus;
+                return loginStatus;
             }
         }
 
@@ -56,48 +52,48 @@ namespace WhatsAppApi
 
         protected void _constructBase(string phoneNum, string imei, string nick, bool debug, bool hidden)
         {
-            this.messageQueue = new List<ProtocolTreeNode>();
-            this.phoneNumber = phoneNum;
-            this.password = imei;
-            this.name = nick;
+            messageQueue = new List<ProtocolTreeNode>();
+            phoneNumber = phoneNum;
+            password = imei;
+            name = nick;
             this.hidden = hidden;
-            WhatsApp.DEBUG = debug;
-            this.reader = new BinTreeNodeReader();
-            this.loginStatus = CONNECTION_STATUS.DISCONNECTED;
-            this.BinWriter = new BinTreeNodeWriter();
-            this.whatsNetwork = new WhatsNetwork(WhatsConstants.WhatsAppHost, WhatsConstants.WhatsPort, this.timeout);
+            DEBUG = debug;
+            reader = new BinTreeNodeReader();
+            loginStatus = CONNECTION_STATUS.DISCONNECTED;
+            BinWriter = new BinTreeNodeWriter();
+            whatsNetwork = new WhatsNetwork(WhatsConstants.WhatsAppHost, WhatsConstants.WhatsPort, timeout);
         }
 
         public void Connect()
         {
             try
             {
-                this.whatsNetwork.Connect();
-                this.loginStatus = CONNECTION_STATUS.CONNECTED;
+                whatsNetwork.Connect();
+                loginStatus = CONNECTION_STATUS.CONNECTED;
                 //success
-                this.fireOnConnectSuccess();
+                fireOnConnectSuccess();
             }
             catch (Exception e)
             {
-                this.fireOnConnectFailed(e);
+                fireOnConnectFailed(e);
             }
         }
 
         public void Disconnect(Exception ex = null)
         {
-            this.whatsNetwork.Disconenct();
-            this.loginStatus = CONNECTION_STATUS.DISCONNECTED;
-            this.fireOnDisconnect(ex);
+            whatsNetwork.Disconenct();
+            loginStatus = CONNECTION_STATUS.DISCONNECTED;
+            fireOnDisconnect(ex);
         }
 
         protected byte[] encryptPassword()
         {
-            return Convert.FromBase64String(this.password);
+            return Convert.FromBase64String(password);
         }
 
         public AccountInfo GetAccountInfo()
         {
-            return this.accountinfo;
+            return accountinfo;
         }
 
         public ProtocolTreeNode[] GetAllMessages()
@@ -105,8 +101,8 @@ namespace WhatsAppApi
             ProtocolTreeNode[] tmpReturn = null;
             lock (messageLock)
             {
-                tmpReturn = this.messageQueue.ToArray();
-                this.messageQueue.Clear();
+                tmpReturn = messageQueue.ToArray();
+                messageQueue.Clear();
             }
             return tmpReturn;
         }
@@ -115,32 +111,32 @@ namespace WhatsAppApi
         {
             lock (messageLock)
             {
-                this.messageQueue.Add(node);
+                messageQueue.Add(node);
             }
         }
 
         public bool HasMessages()
         {
-            if (this.messageQueue == null)
+            if (messageQueue == null)
                 return false;
-            return this.messageQueue.Count > 0;
+            return messageQueue.Count > 0;
         }
 
         protected void SendData(byte[] data)
         {
             try
             {
-                this.whatsNetwork.SendData(data);
+                whatsNetwork.SendData(data);
             }
             catch (ConnectionException)
             {
-                this.Disconnect();
+                Disconnect();
             }
         }
 
         protected void SendNode(ProtocolTreeNode node)
         {
-            this.SendData(this.BinWriter.Write(node));
+            SendData(BinWriter.Write(node));
         }
     }
 }

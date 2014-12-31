@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
 
 namespace WhatsAppApi.Helper
 {
@@ -11,14 +8,9 @@ namespace WhatsAppApi.Helper
         public KeyStream Key;
         private List<byte> buffer;
 
-        public BinTreeNodeReader()
-        {
-            
-        }
-
         public void SetKey(byte[] key, byte[] mac)
         {
-            this.Key = new KeyStream(key, mac);
+            Key = new KeyStream(key, mac);
         }
 
         public ProtocolTreeNode nextTree(byte[] pInput = null, bool useDecrypt = true)
@@ -26,36 +18,36 @@ namespace WhatsAppApi.Helper
 
             if (pInput != null && pInput.Length > 0)
             {
-                this.buffer = new List<byte>();
-                this.buffer.AddRange(pInput);
+                buffer = new List<byte>();
+                buffer.AddRange(pInput);
 
-                int stanzaFlag = (this.peekInt8() & 0xF0) >> 4;
-                int stanzaSize = this.peekInt16(1);
+                int stanzaFlag = (peekInt8() & 0xF0) >> 4;
+                int stanzaSize = peekInt16(1);
 
                 int flags = stanzaFlag;
                 int size = stanzaSize;
 
-                this.readInt24();
+                readInt24();
 
                 bool isEncrypted = (stanzaFlag & 8) != 0;
 
                 if (isEncrypted)
                 {
-                    if (this.Key != null)
+                    if (Key != null)
                     {
                         var realStanzaSize = stanzaSize - 4;
                         var macOffset = stanzaSize - 4;
-                        var treeData = this.buffer.ToArray();
+                        var treeData = buffer.ToArray();
                         try
                         {
-                            this.Key.DecodeMessage(treeData, macOffset, 0, realStanzaSize);
+                            Key.DecodeMessage(treeData, macOffset, 0, realStanzaSize);
                         }
                         catch (Exception e)
                         {
-                            Helper.DebugAdapter.Instance.fireOnPrintDebug(e);
+                            DebugAdapter.Instance.fireOnPrintDebug(e);
                         }
-                        this.buffer.Clear();
-                        this.buffer.AddRange(treeData);
+                        buffer.Clear();
+                        buffer.AddRange(treeData);
                     }
                     else
                     {
@@ -65,9 +57,9 @@ namespace WhatsAppApi.Helper
 
                 if (stanzaSize > 0)
                 {
-                    ProtocolTreeNode node = this.nextTreeInternal();
+                    ProtocolTreeNode node = nextTreeInternal();
                     if (node != null)
-                        this.DebugPrint(node.NodeString("RECVD: "));
+                        DebugPrint(node.NodeString("RECVD: "));
                     return node;
                 }
             }
@@ -96,7 +88,7 @@ namespace WhatsAppApi.Helper
             }
             if ((token > 2) && (token < 245))
             {
-                ret = WhatsApp.SYSEncoding.GetBytes(this.getToken(token));
+                ret = WhatsApp.SYSEncoding.GetBytes(getToken(token));
             }
             else if (token == 0)
             {
@@ -104,23 +96,23 @@ namespace WhatsAppApi.Helper
             }
             else if (token == 252)
             {
-                int size = this.readInt8();
-                ret = this.fillArray(size);
+                int size = readInt8();
+                ret = fillArray(size);
             }
             else if (token == 253)
             {
-                int size = this.readInt24();
-                ret = this.fillArray(size);
+                int size = readInt24();
+                ret = fillArray(size);
             }
             else if (token == 254)
             {
-                int tmpToken = this.readInt8();
-                ret = WhatsApp.SYSEncoding.GetBytes(this.getToken(tmpToken + 0xf5));
+                int tmpToken = readInt8();
+                ret = WhatsApp.SYSEncoding.GetBytes(getToken(tmpToken + 0xf5));
             }
             else if (token == 250)
             {
-                string user = WhatsApp.SYSEncoding.GetString(this.readBytes(this.readInt8()));
-                string server = WhatsApp.SYSEncoding.GetString(this.readBytes(this.readInt8()));
+                string user = WhatsApp.SYSEncoding.GetString(readBytes(readInt8()));
+                string server = WhatsApp.SYSEncoding.GetString(readBytes(readInt8()));
                 if ((user.Length > 0) && (server.Length > 0))
                 {
                     ret = WhatsApp.SYSEncoding.GetBytes(user + "@" + server);
@@ -139,8 +131,8 @@ namespace WhatsAppApi.Helper
             int attribCount = (size - 2 + size % 2) / 2;
             for (int i = 0; i < attribCount; i++)
             {
-                byte[] keyB = this.readBytes(this.readInt8());
-                byte[] valueB = this.readBytes(this.readInt8());
+                byte[] keyB = readBytes(readInt8());
+                byte[] valueB = readBytes(readInt8());
                 string key = WhatsApp.SYSEncoding.GetString(keyB);
                 string value = WhatsApp.SYSEncoding.GetString(valueB);
                 attributes.Add(new KeyValue(key, value));
@@ -150,32 +142,32 @@ namespace WhatsAppApi.Helper
 
         protected ProtocolTreeNode nextTreeInternal()
         {
-            int token1 = this.readInt8();
-            int size = this.readListSize(token1);
-            int token2 = this.readInt8();
+            int token1 = readInt8();
+            int size = readListSize(token1);
+            int token2 = readInt8();
             if (token2 == 1)
             {
-                var attributes = this.readAttributes(size);
+                var attributes = readAttributes(size);
                 return new ProtocolTreeNode("start", attributes);
             }
             if (token2 == 2)
             {
                 return null;
             }
-            string tag = WhatsApp.SYSEncoding.GetString(this.readBytes(token2));
-            var tmpAttributes = this.readAttributes(size);
+            string tag = WhatsApp.SYSEncoding.GetString(readBytes(token2));
+            var tmpAttributes = readAttributes(size);
 
             if ((size % 2) == 1)
             {
                 return new ProtocolTreeNode(tag, tmpAttributes);
             }
-            int token3 = this.readInt8();
-            if (this.isListTag(token3))
+            int token3 = readInt8();
+            if (isListTag(token3))
             {
-                return new ProtocolTreeNode(tag, tmpAttributes, this.readList(token3));
+                return new ProtocolTreeNode(tag, tmpAttributes, readList(token3));
             }
 
-            return new ProtocolTreeNode(tag, tmpAttributes, null, this.readBytes(token3));
+            return new ProtocolTreeNode(tag, tmpAttributes, null, readBytes(token3));
         }
 
         protected bool isListTag(int token)
@@ -185,11 +177,11 @@ namespace WhatsAppApi.Helper
 
         protected List<ProtocolTreeNode> readList(int token)
         {
-            int size = this.readListSize(token);
+            int size = readListSize(token);
             var ret = new List<ProtocolTreeNode>();
             for (int i = 0; i < size; i++)
             {
-                ret.Add(this.nextTreeInternal());
+                ret.Add(nextTreeInternal());
             }
             return ret;
         }
@@ -203,11 +195,11 @@ namespace WhatsAppApi.Helper
             }
             else if (token == 0xf8)
             {
-                size = this.readInt8();
+                size = readInt8();
             }
             else if (token == 0xf9)
             {
-                size = this.readInt16();
+                size = readInt16();
             }
             else
             {
@@ -220,8 +212,8 @@ namespace WhatsAppApi.Helper
         {
             int ret = 0;
 
-            if (this.buffer.Count >= offset + 1)
-                ret = this.buffer[offset];
+            if (buffer.Count >= offset + 1)
+                ret = buffer[offset];
 
             return ret;
         }
@@ -229,9 +221,9 @@ namespace WhatsAppApi.Helper
         protected int peekInt24(int offset = 0)
         {
             int ret = 0;
-            if (this.buffer.Count >= 3 + offset)
+            if (buffer.Count >= 3 + offset)
             {
-                ret = (this.buffer[0 + offset] << 16) + (this.buffer[1 + offset] << 8) + this.buffer[2 + offset];
+                ret = (buffer[0 + offset] << 16) + (buffer[1 + offset] << 8) + buffer[2 + offset];
             }
             return ret;
         }
@@ -239,12 +231,12 @@ namespace WhatsAppApi.Helper
         protected int readInt24()
         {
             int ret = 0;
-            if (this.buffer.Count >= 3)
+            if (buffer.Count >= 3)
             {
-                ret = this.buffer[0] << 16;
-                ret |=this.buffer[1] << 8;
-                ret |=this.buffer[2] << 0;
-                this.buffer.RemoveRange(0, 3);
+                ret = buffer[0] << 16;
+                ret |=buffer[1] << 8;
+                ret |=buffer[2] << 0;
+                buffer.RemoveRange(0, 3);
             }
             return ret;
         }
@@ -252,10 +244,10 @@ namespace WhatsAppApi.Helper
         protected int peekInt16(int offset = 0)
         {
             int ret = 0;
-            if (this.buffer.Count >= offset + 2)
+            if (buffer.Count >= offset + 2)
             {
-                ret = (int)this.buffer[0+offset] << 8;
-                ret |= (int)this.buffer[1+offset] << 0;
+                ret = buffer[0+offset] << 8;
+                ret |= buffer[1+offset] << 0;
             }
             return ret;
         }
@@ -263,11 +255,11 @@ namespace WhatsAppApi.Helper
         protected int readInt16()
         {
             int ret = 0;
-            if (this.buffer.Count >= 2)
+            if (buffer.Count >= 2)
             {
-                ret = (int)this.buffer[0] << 8;
-                ret |= (int)this.buffer[1] << 0;
-                this.buffer.RemoveRange(0, 2);
+                ret = buffer[0] << 8;
+                ret |= buffer[1] << 0;
+                buffer.RemoveRange(0, 2);
             }
             return ret;
         }
@@ -275,10 +267,10 @@ namespace WhatsAppApi.Helper
         protected int readInt8()
         {
             int ret = 0;
-            if (this.buffer.Count >= 1)
+            if (buffer.Count >= 1)
             {
-                ret = (int)this.buffer[0];
-                this.buffer.RemoveAt(0);
+                ret = buffer[0];
+                buffer.RemoveAt(0);
             }
             return ret;
         }
@@ -286,10 +278,10 @@ namespace WhatsAppApi.Helper
         protected byte[] fillArray(int len)
         {
             byte[] ret = new byte[len];
-            if (this.buffer.Count >= len)
+            if (buffer.Count >= len)
             {
-                Buffer.BlockCopy(this.buffer.ToArray(), 0, ret, 0, len);
-                this.buffer.RemoveRange(0, len);
+                Buffer.BlockCopy(buffer.ToArray(), 0, ret, 0, len);
+                buffer.RemoveRange(0, len);
             }
             else
             {
@@ -302,7 +294,7 @@ namespace WhatsAppApi.Helper
         {
             if (WhatsApp.DEBUG && debugMsg.Length > 0)
             {
-                Helper.DebugAdapter.Instance.fireOnPrintDebug(debugMsg);
+                DebugAdapter.Instance.fireOnPrintDebug(debugMsg);
             }
         }
     }

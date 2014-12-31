@@ -1,36 +1,34 @@
-﻿using System;
-
-namespace WhatsAppApi.Helper
+﻿namespace WhatsAppApi.Helper
 {
     public class RC4
     {
-        private int i = 0;
-        private int j = 0;
+        private int i;
+        private int j;
         private int[] s;
 
         public RC4(byte[] key, int drop)
         {
             s = new int[256];
-            while (this.i < this.s.Length)
+            while (i < s.Length)
             {
-                this.s[this.i] = this.i;
-                this.i++;
+                s[i] = i;
+                i++;
             }
-            this.j = 0;
-            this.i = 0;
-            while (this.i < 0x100)
+            j = 0;
+            i = 0;
+            while (i < 0x100)
             {
-                this.j = ((this.j + key[this.i % key.Length]) + this.s[this.i]) & 0xff;
-                Swap<int>(this.s, this.i, this.j);
-                this.i++;
+                j = ((j + key[i % key.Length]) + s[i]) & 0xff;
+                Swap(s, i, j);
+                i++;
             }
-            this.i = this.j = 0;
-            this.Cipher(new byte[drop]);
+            i = j = 0;
+            Cipher(new byte[drop]);
         }
 
         public void Cipher(byte[] data)
         {
-            this.Cipher(data, 0, data.Length);
+            Cipher(data, 0, data.Length);
         }
 
         public void Cipher(byte[] data, int offset, int length)
@@ -38,10 +36,10 @@ namespace WhatsAppApi.Helper
             for (int i = length; i > 0; i--)
             {
                 this.i = (this.i + 1) & 0xff;
-                this.j = (this.j + this.s[this.i]) & 0xff;
-                Swap<int>(this.s, this.i, this.j);
+                j = (j + s[this.i]) & 0xff;
+                Swap(s, this.i, j);
                 int index = offset++;
-                data[index] = (byte)(data[index] ^ this.s[(this.s[this.i] + this.s[this.j]) & 0xff]);
+                data[index] = (byte)(data[index] ^ s[(s[this.i] + s[j]) & 0xff]);
             }
         }
 

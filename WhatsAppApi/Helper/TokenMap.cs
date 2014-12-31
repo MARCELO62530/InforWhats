@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace WhatsAppApi.Helper
 {
@@ -22,16 +20,15 @@ namespace WhatsAppApi.Helper
          }
          public TokenMap(T first, U second)
          {
-             this.First = first;
-             this.Second = second;
+             First = first;
+             Second = second;
          }
      }
 
      public class TokenDictionary
      {
          private const int secondaryStringsStart = 236;
-         private static string[] primaryStrings = new string[]
-         {
+         private static string[] primaryStrings = {
              default(string),
              default(string),
              default(string),
@@ -238,9 +235,8 @@ namespace WhatsAppApi.Helper
              "demote",
              "creator"
          };
-         private static string[][] secondaryStrings = new string[][]
-         {
-             new string[]
+         private static string[][] secondaryStrings = {
+             new[]
              {
                  "Bell.caf",
                  "Boing.caf",
@@ -433,23 +429,23 @@ namespace WhatsAppApi.Helper
 
          public TokenDictionary()
          {
-             for (int i = 0; i < TokenDictionary.primaryStrings.Length; i++)
+             for (int i = 0; i < primaryStrings.Length; i++)
              {
-                 string text = TokenDictionary.primaryStrings[i];
+                 string text = primaryStrings[i];
                  if (text != null)
                  {
-                     this.primaryStringDict.Add(text, i);
+                     primaryStringDict.Add(text, i);
                  }
              }
-             for (int j = 0; j < TokenDictionary.secondaryStrings.Length; j++)
+             for (int j = 0; j < secondaryStrings.Length; j++)
              {
-                 string[] array = TokenDictionary.secondaryStrings[j];
+                 string[] array = secondaryStrings[j];
                  for (int k = 0; k < array.Length; k++)
                  {
                      string text2 = array[k];
                      if (text2 != null)
                      {
-                         this.secondaryStringDict.Add(text2, new TokenMap<int, int>
+                         secondaryStringDict.Add(text2, new TokenMap<int, int>
                              {
                                  First = j + 236,
                                  Second = k
@@ -461,12 +457,12 @@ namespace WhatsAppApi.Helper
 
          public bool TryGetToken(string str, ref int subdict, ref int token)
          {
-             if (this.primaryStringDict.TryGetValue(str, out token))
+             if (primaryStringDict.TryGetValue(str, out token))
              {
                  return true;
              }
              TokenMap<int, int> tokenMap;
-             if (this.secondaryStringDict.TryGetValue(str, out tokenMap))
+             if (secondaryStringDict.TryGetValue(str, out tokenMap))
              {
                  subdict = tokenMap.First;
                  token = tokenMap.Second;
@@ -479,21 +475,21 @@ namespace WhatsAppApi.Helper
              string[] array = null;
              if (subdict >= 0)
              {
-                 if (subdict >= TokenDictionary.secondaryStrings.Length)
+                 if (subdict >= secondaryStrings.Length)
                  {
                      throw new Exception("Invalid subdictionary " + subdict);
                  }
-                 array = TokenDictionary.secondaryStrings[subdict];
+                 array = secondaryStrings[subdict];
              }
              else
              {
-                 if (token >= 236 && token < 236 + TokenDictionary.secondaryStrings.Length)
+                 if (token >= 236 && token < 236 + secondaryStrings.Length)
                  {
                      subdict = token - 236;
                  }
                  else
                  {
-                     array = TokenDictionary.primaryStrings;
+                     array = primaryStrings;
                  }
              }
              if (array != null)

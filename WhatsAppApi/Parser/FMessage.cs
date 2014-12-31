@@ -1,4 +1,5 @@
 ﻿using System;
+using WhatsAppApi.Account;
 using WhatsAppApi.Helper;
 
 namespace WhatsAppApi.Parser
@@ -24,47 +25,47 @@ namespace WhatsAppApi.Parser
         public DateTime? timestamp;
         public bool wants_receipt;
 
-        public WhatsAppApi.Account.WhatsUser User { get; private set; }
+        public WhatsUser User { get; private set; }
 
         public FMessage(FMessageIdentifierKey key)
         {
-            this.status = Status.Undefined;
-            this.gap_behind = true;
-            this.identifier_key = key;
+            status = Status.Undefined;
+            gap_behind = true;
+            identifier_key = key;
         }
 
-        internal FMessage(WhatsAppApi.Account.WhatsUser remote_user, bool from_me)
+        internal FMessage(WhatsUser remote_user, bool from_me)
         {
-            this.status = Status.Undefined;
-            this.gap_behind = true;
-            this.User = remote_user;
-            this.identifier_key = new FMessageIdentifierKey(remote_user.GetFullJid(), from_me, TicketManager.GenerateId());
+            status = Status.Undefined;
+            gap_behind = true;
+            User = remote_user;
+            identifier_key = new FMessageIdentifierKey(remote_user.GetFullJid(), from_me, TicketManager.GenerateId());
         }
         internal FMessage(string remote_jid, bool from_me)
         {
-            this.status = Status.Undefined;
-            this.gap_behind = true;
-            this.identifier_key = new FMessageIdentifierKey(remote_jid, from_me, TicketManager.GenerateId());
+            status = Status.Undefined;
+            gap_behind = true;
+            identifier_key = new FMessageIdentifierKey(remote_jid, from_me, TicketManager.GenerateId());
         }
 
         public FMessage(string remote_jid, string data, object image)
             : this(remote_jid, true)
         {
             this.data = data;
-            this.thumb_image = image;
-            this.timestamp = new DateTime?(DateTime.Now);
+            thumb_image = image;
+            timestamp = DateTime.Now;
         }
-        public FMessage(WhatsAppApi.Account.WhatsUser remote_user, string data, object image)
+        public FMessage(WhatsUser remote_user, string data, object image)
             : this(remote_user, true)
         {
             this.data = data;
-            this.thumb_image = image;
-            this.timestamp = new DateTime?(DateTime.Now);
+            thumb_image = image;
+            timestamp = DateTime.Now;
         }
 
         public void AcceptVisitor(FMessageVisitor visitor)
         {
-            switch (this.media_wa_type)
+            switch (media_wa_type)
             {
                 case Type.Image:
                     visitor.Image(this);
@@ -175,7 +176,7 @@ namespace WhatsAppApi.Parser
             internal string media_name;
             internal long? media_size;
             internal string media_url;
-            internal FMessage.Type? media_wa_type;
+            internal Type? media_wa_type;
             internal FMessage message;
             internal bool? offline;
             internal string remote_jid;
@@ -186,98 +187,98 @@ namespace WhatsAppApi.Parser
 
             public byte[] BinaryData()
             {
-                return this.binary_data;
+                return binary_data;
             }
 
-            public FMessage.Builder BinaryData(byte[] data)
+            public Builder BinaryData(byte[] data)
             {
-                this.binary_data = data;
+                binary_data = data;
                 return this;
             }
 
             public FMessage Build()
             {
-                if (this.message == null)
+                if (message == null)
                 {
                     return null;
                 }
-                if (((this.remote_jid != null) && this.from_me.HasValue) && (this.id != null))
+                if (((remote_jid != null) && from_me.HasValue) && (id != null))
                 {
-                    this.message.identifier_key = new FMessage.FMessageIdentifierKey(this.remote_jid, this.from_me.Value, this.id);
+                    message.identifier_key = new FMessageIdentifierKey(remote_jid, from_me.Value, id);
                 }
-                if (this.remote_resource != null)
+                if (remote_resource != null)
                 {
-                    this.message.remote_resource = this.remote_resource;
+                    message.remote_resource = remote_resource;
                 }
-                if (this.wants_receipt.HasValue)
+                if (wants_receipt.HasValue)
                 {
-                    this.message.wants_receipt = this.wants_receipt.Value;
+                    message.wants_receipt = wants_receipt.Value;
                 }
-                if (this.data != null)
+                if (data != null)
                 {
-                    this.message.data = this.data;
+                    message.data = data;
                 }
-                if (this.thumb_image != null)
+                if (thumb_image != null)
                 {
-                    this.message.thumb_image = this.thumb_image;
+                    message.thumb_image = thumb_image;
                 }
-                if (this.timestamp.HasValue)
+                if (timestamp.HasValue)
                 {
-                    this.message.timestamp = new DateTime?(this.timestamp.Value);
+                    message.timestamp = timestamp.Value;
                 }
-                if (this.offline.HasValue)
+                if (offline.HasValue)
                 {
-                    this.message.offline = this.offline.Value;
+                    message.offline = offline.Value;
                 }
-                if (this.media_wa_type.HasValue)
+                if (media_wa_type.HasValue)
                 {
-                    this.message.media_wa_type = this.media_wa_type.Value;
+                    message.media_wa_type = media_wa_type.Value;
                 }
-                if (this.media_size.HasValue)
+                if (media_size.HasValue)
                 {
-                    this.message.media_size = this.media_size.Value;
+                    message.media_size = media_size.Value;
                 }
-                if (this.media_duration_seconds.HasValue)
+                if (media_duration_seconds.HasValue)
                 {
-                    this.message.media_duration_seconds = this.media_duration_seconds.Value;
+                    message.media_duration_seconds = media_duration_seconds.Value;
                 }
-                if (this.media_url != null)
+                if (media_url != null)
                 {
-                    this.message.media_url = this.media_url;
+                    message.media_url = media_url;
                 }
-                if (this.media_name != null)
+                if (media_name != null)
                 {
-                    this.message.media_name = this.media_name;
+                    message.media_name = media_name;
                 }
-                if (this.latitude.HasValue)
+                if (latitude.HasValue)
                 {
-                    this.message.latitude = this.latitude.Value;
+                    message.latitude = latitude.Value;
                 }
-                if (this.longitude.HasValue)
+                if (longitude.HasValue)
                 {
-                    this.message.longitude = this.longitude.Value;
+                    message.longitude = longitude.Value;
                 }
-                if (this.location_url != null)
+                if (location_url != null)
                 {
-                    this.message.location_url = this.location_url;
+                    message.location_url = location_url;
                 }
-                if (this.location_details != null)
+                if (location_details != null)
                 {
-                    this.message.location_details = this.location_details;
+                    message.location_details = location_details;
                 }
-                if (this.binary_data != null)
+                if (binary_data != null)
                 {
-                    this.message.binary_data = this.binary_data;
+                    message.binary_data = binary_data;
                 }
-                return this.message;
+                return message;
             }
 
             public string Data()
             {
-                return this.data;
+                return data;
             }
 
-            public FMessage.Builder Data(string data)
+            public Builder Data(string data)
             {
                 this.data = data;
                 return this;
@@ -285,21 +286,21 @@ namespace WhatsAppApi.Parser
 
             public bool? From_me()
             {
-                return this.from_me;
+                return from_me;
             }
 
-            public FMessage.Builder From_me(bool from_me)
+            public Builder From_me(bool from_me)
             {
-                this.from_me = new bool?(from_me);
+                this.from_me = from_me;
                 return this;
             }
 
             public string Id()
             {
-                return this.id;
+                return id;
             }
 
-            public FMessage.Builder Id(string id)
+            public Builder Id(string id)
             {
                 this.id = id;
                 return this;
@@ -307,78 +308,78 @@ namespace WhatsAppApi.Parser
 
             public bool Instantiated()
             {
-                return (this.message != null);
+                return (message != null);
             }
 
-            public FMessage.Builder Key(FMessage.FMessageIdentifierKey key)
+            public Builder Key(FMessageIdentifierKey key)
             {
-                this.remote_jid = key.remote_jid;
-                this.from_me = new bool?(key.from_me);
-                this.id = key.id;
+                remote_jid = key.remote_jid;
+                from_me = key.from_me;
+                id = key.id;
                 return this;
             }
 
             public double? Latitude()
             {
-                return this.latitude;
+                return latitude;
             }
 
-            public FMessage.Builder Latitude(double latitude)
+            public Builder Latitude(double latitude)
             {
-                this.latitude = new double?(latitude);
+                this.latitude = latitude;
                 return this;
             }
 
             public string Location_details()
             {
-                return this.location_details;
+                return location_details;
             }
 
-            public FMessage.Builder Location_details(string details)
+            public Builder Location_details(string details)
             {
-                this.location_details = details;
+                location_details = details;
                 return this;
             }
 
             public string Location_url()
             {
-                return this.location_url;
+                return location_url;
             }
 
-            public FMessage.Builder Location_url(string url)
+            public Builder Location_url(string url)
             {
-                this.location_url = url;
+                location_url = url;
                 return this;
             }
 
             public double? Longitude()
             {
-                return this.longitude;
+                return longitude;
             }
 
-            public FMessage.Builder Longitude(double longitude)
+            public Builder Longitude(double longitude)
             {
-                this.longitude = new double?(longitude);
+                this.longitude = longitude;
                 return this;
             }
 
             public int? Media_duration_seconds()
             {
-                return this.media_duration_seconds;
+                return media_duration_seconds;
             }
 
-            public FMessage.Builder Media_duration_seconds(int media_duration_seconds)
+            public Builder Media_duration_seconds(int media_duration_seconds)
             {
-                this.media_duration_seconds = new int?(media_duration_seconds);
+                this.media_duration_seconds = media_duration_seconds;
                 return this;
             }
 
             public string Media_name()
             {
-                return this.media_name;
+                return media_name;
             }
 
-            public FMessage.Builder Media_name(string media_name)
+            public Builder Media_name(string media_name)
             {
                 this.media_name = media_name;
                 return this;
@@ -386,81 +387,81 @@ namespace WhatsAppApi.Parser
 
             public long? Media_size()
             {
-                return this.media_size;
+                return media_size;
             }
 
-            public FMessage.Builder Media_size(long media_size)
+            public Builder Media_size(long media_size)
             {
-                this.media_size = new long?(media_size);
+                this.media_size = media_size;
                 return this;
             }
 
             public string Media_url()
             {
-                return this.media_url;
+                return media_url;
             }
 
-            public FMessage.Builder Media_url(string media_url)
+            public Builder Media_url(string media_url)
             {
                 this.media_url = media_url;
                 return this;
             }
 
-            public FMessage.Type? Media_wa_type()
+            public Type? Media_wa_type()
             {
-                return this.media_wa_type;
+                return media_wa_type;
             }
 
-            public FMessage.Builder Media_wa_type(FMessage.Type media_wa_type)
+            public Builder Media_wa_type(Type media_wa_type)
             {
-                this.media_wa_type = new FMessage.Type?(media_wa_type);
+                this.media_wa_type = media_wa_type;
                 return this;
             }
 
-            public FMessage.Builder NewIncomingInstance()
+            public Builder NewIncomingInstance()
             {
-                if (((this.remote_jid == null) || !this.from_me.HasValue) || (this.id == null))
+                if (((remote_jid == null) || !from_me.HasValue) || (id == null))
                 {
                     throw new NotSupportedException(
                         "missing required property before instantiating new incoming message");
                 }
-                this.message =
-                    new FMessage(new FMessage.FMessageIdentifierKey(this.remote_jid, this.from_me.Value, this.id));
+                message =
+                    new FMessage(new FMessageIdentifierKey(remote_jid, from_me.Value, id));
                 return this;
             }
 
-            public FMessage.Builder NewOutgoingInstance()
+            public Builder NewOutgoingInstance()
             {
-                if (((this.remote_jid == null) || (this.data == null)) || (this.thumb_image == null))
+                if (((remote_jid == null) || (data == null)) || (thumb_image == null))
                 {
                     throw new NotSupportedException(
                         "missing required property before instantiating new outgoing message");
                 }
-                if ((this.id != null) || (this.from_me.Value && !this.from_me.Value))
+                if ((id != null) || (from_me.Value && !from_me.Value))
                 {
                     throw new NotSupportedException("invalid property set before instantiating new outgoing message");
                 }
-                this.message = new FMessage(this.remote_jid, this.data, this.thumb_image);
+                message = new FMessage(remote_jid, data, thumb_image);
                 return this;
             }
 
             public bool? Offline()
             {
-                return this.offline;
+                return offline;
             }
 
-            public FMessage.Builder Offline(bool offline)
+            public Builder Offline(bool offline)
             {
-                this.offline = new bool?(offline);
+                this.offline = offline;
                 return this;
             }
 
             public string Remote_jid()
             {
-                return this.remote_jid;
+                return remote_jid;
             }
 
-            public FMessage.Builder Remote_jid(string remote_jid)
+            public Builder Remote_jid(string remote_jid)
             {
                 this.remote_jid = remote_jid;
                 return this;
@@ -468,16 +469,16 @@ namespace WhatsAppApi.Parser
 
             public string Remote_resource()
             {
-                return this.remote_resource;
+                return remote_resource;
             }
 
-            public FMessage.Builder Remote_resource(string remote_resource)
+            public Builder Remote_resource(string remote_resource)
             {
                 this.remote_resource = remote_resource;
                 return this;
             }
 
-            public FMessage.Builder SetInstance(FMessage message)
+            public Builder SetInstance(FMessage message)
             {
                 this.message = message;
                 return this;
@@ -485,10 +486,10 @@ namespace WhatsAppApi.Parser
 
             public string Thumb_image()
             {
-                return this.thumb_image;
+                return thumb_image;
             }
 
-            public FMessage.Builder Thumb_image(string thumb_image)
+            public Builder Thumb_image(string thumb_image)
             {
                 this.thumb_image = thumb_image;
                 return this;
@@ -496,10 +497,10 @@ namespace WhatsAppApi.Parser
 
             public DateTime? Timestamp()
             {
-                return this.timestamp;
+                return timestamp;
             }
 
-            public FMessage.Builder Timestamp(DateTime? timestamp)
+            public Builder Timestamp(DateTime? timestamp)
             {
                 this.timestamp = timestamp;
                 return this;
@@ -507,12 +508,12 @@ namespace WhatsAppApi.Parser
 
             public bool? Wants_receipt()
             {
-                return this.wants_receipt;
+                return wants_receipt;
             }
 
-            public FMessage.Builder Wants_receipt(bool wants_receipt)
+            public Builder Wants_receipt(bool wants_receipt)
             {
-                this.wants_receipt = new bool?(wants_receipt);
+                this.wants_receipt = wants_receipt;
                 return this;
             }
         }
@@ -539,34 +540,34 @@ namespace WhatsAppApi.Parser
                     {
                         return false;
                     }
-                    if (base.GetType() != obj.GetType())
+                    if (GetType() != obj.GetType())
                     {
                         return false;
                     }
-                    FMessage.FMessageIdentifierKey key = (FMessage.FMessageIdentifierKey)obj;
-                    if (this.from_me != key.from_me)
+                    FMessageIdentifierKey key = (FMessageIdentifierKey)obj;
+                    if (from_me != key.from_me)
                     {
                         return false;
                     }
-                    if (this.id == null)
+                    if (id == null)
                     {
                         if (key.id != null)
                         {
                             return false;
                         }
                     }
-                    else if (!this.id.Equals(key.id))
+                    else if (!id.Equals(key.id))
                     {
                         return false;
                     }
-                    if (this.remote_jid == null)
+                    if (remote_jid == null)
                     {
                         if (key.remote_jid != null)
                         {
                             return false;
                         }
                     }
-                    else if (!this.remote_jid.Equals(key.remote_jid))
+                    else if (!remote_jid.Equals(key.remote_jid))
                     {
                         return false;
                     }
@@ -578,19 +579,15 @@ namespace WhatsAppApi.Parser
             {
                 int num = 0x1f;
                 int num2 = 1;
-                num2 = (0x1f * 1) + (this.from_me ? 0x4cf : 0x4d5);
-                num2 = (num * num2) + ((this.id == null) ? 0 : this.id.GetHashCode());
-                return ((num * num2) + ((this.remote_jid == null) ? 0 : this.remote_jid.GetHashCode()));
+                num2 = (0x1f * 1) + (from_me ? 0x4cf : 0x4d5);
+                num2 = (num * num2) + ((id == null) ? 0 : id.GetHashCode());
+                return ((num * num2) + ((remote_jid == null) ? 0 : remote_jid.GetHashCode()));
             }
 
             public override string ToString()
             {
                 return
-                    string.Concat(new object[]
-                                      {
-                                          "Key[id=", this.id, ", from_me=", this.from_me, ", remote_jid=", this.remote_jid,
-                                          "]"
-                                      });
+                    string.Concat("Key[id=", id, ", from_me=", from_me, ", remote_jid=", remote_jid, "]");
             }
         }
 

@@ -68,16 +68,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Credencial.cs" />
     <Compile Include="Eventos.cs" />
+    <Compile Include="EventosArgs.cs" />
     <Compile Include="Mensagem.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Pessoa.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Whats.cs" />
+    <Compile Include="WhatsApi.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WhatsAppApi\WhatsAppApi.csproj">

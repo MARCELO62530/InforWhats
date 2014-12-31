@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace WhatsAppApi.Helper
 {
@@ -18,23 +17,23 @@ namespace WhatsAppApi.Helper
         public byte[] StartStream(string domain, string resource)
         {
             var attributes = new List<KeyValue>();
-            this.buffer = new List<byte>();
+            buffer = new List<byte>();
             
             attributes.Add(new KeyValue("to", domain));
             attributes.Add(new KeyValue("resource", resource));
-            this.writeListStart(attributes.Count * 2 + 1);
+            writeListStart(attributes.Count * 2 + 1);
 
-            this.buffer.Add(1);
-            this.writeAttributes(attributes.ToArray());
+            buffer.Add(1);
+            writeAttributes(attributes.ToArray());
 
-            byte[] ret = this.flushBuffer();
-            this.buffer.Add((byte)'W');
-            this.buffer.Add((byte)'A');
-            this.buffer.Add(0x1);
-            this.buffer.Add(0x4);
-            this.buffer.AddRange(ret);
+            byte[] ret = flushBuffer();
+            buffer.Add((byte)'W');
+            buffer.Add((byte)'A');
+            buffer.Add(0x1);
+            buffer.Add(0x4);
+            buffer.AddRange(ret);
             ret = buffer.ToArray();
-            this.buffer = new List<byte>();
+            buffer = new List<byte>();
             return ret;
         }
 
@@ -42,42 +41,42 @@ namespace WhatsAppApi.Helper
         {
             if (node == null)
             {
-                this.buffer.Add(0);
+                buffer.Add(0);
             }
             else
             {
-                this.DebugPrint(node.NodeString("SENT: "));
-                this.writeInternal(node);
+                DebugPrint(node.NodeString("SENT: "));
+                writeInternal(node);
             }
-            return this.flushBuffer(encrypt);
+            return flushBuffer(encrypt);
         }
 
         protected byte[] flushBuffer(bool encrypt = true)
         {
-            byte[] data = this.buffer.ToArray();
+            byte[] data = buffer.ToArray();
             byte[] data2 = new byte[data.Length + 4];
             Buffer.BlockCopy(data, 0, data2, 0, data.Length);
 
-            byte[] size = this.GetInt24(data.Length);
-            if (encrypt && this.Key != null)
+            byte[] size = GetInt24(data.Length);
+            if (encrypt && Key != null)
             {
                 byte[] paddedData = new byte[data.Length + 4];
                 Array.Copy(data, paddedData, data.Length);
-                this.Key.EncodeMessage(paddedData, paddedData.Length - 4, 0, paddedData.Length - 4);
+                Key.EncodeMessage(paddedData, paddedData.Length - 4, 0, paddedData.Length - 4);
                 data = paddedData;
 
                 //add encryption signature
                 uint encryptedBit = 0u;
                 encryptedBit |= 8u;
                 long dataLength = data.Length;
-                size[0] = (byte)((ulong)((ulong)encryptedBit << 4) | (ulong)((dataLength & 16711680L) >> 16));
+                size[0] = (byte)((ulong)encryptedBit << 4 | (ulong)((dataLength & 16711680L) >> 16));
                 size[1] = (byte)((dataLength & 65280L) >> 8);
                 size[2] = (byte)(dataLength & 255L);
             }
             byte[] ret = new byte[data.Length + 3];
             Buffer.BlockCopy(size, 0, ret, 0, 3);
             Buffer.BlockCopy(data, 0, ret, 3, data.Length);
-            this.buffer = new List<byte>();
+            buffer = new List<byte>();
             return ret;
         }
 
@@ -87,8 +86,8 @@ namespace WhatsAppApi.Helper
             {
                 foreach (var item in attributes)
                 {
-                    this.writeString(item.Key);
-                    this.writeString(item.Value);
+                    writeString(item.Key);
+                    writeString(item.Value);
                 }
             }
         }
@@ -119,33 +118,33 @@ namespace WhatsAppApi.Helper
             int len = bytes.Length;
             if (len >= 0x100)
             {
-                this.buffer.Add(0xfd);
-                this.writeInt24(len);
+                buffer.Add(0xfd);
+                writeInt24(len);
             }
             else
             {
-                this.buffer.Add(0xfc);
-                this.writeInt8(len);
+                buffer.Add(0xfc);
+                writeInt8(len);
             }
-            this.buffer.AddRange(bytes);
+            buffer.AddRange(bytes);
         }
 
         protected void writeInt16(int v)
         {
-            this.buffer.Add((byte)((v & 0xff00) >> 8));
-            this.buffer.Add((byte)(v & 0x00ff));
+            buffer.Add((byte)((v & 0xff00) >> 8));
+            buffer.Add((byte)(v & 0x00ff));
         }
 
         protected void writeInt24(int v)
         {
-            this.buffer.Add((byte)((v & 0xff0000) >> 16));
-            this.buffer.Add((byte)((v & 0x00ff00) >> 8));
-            this.buffer.Add((byte)(v & 0x0000ff));
+            buffer.Add((byte)((v & 0xff0000) >> 16));
+            buffer.Add((byte)((v & 0x00ff00) >> 8));
+            buffer.Add((byte)(v & 0x0000ff));
         }
 
         protected void writeInt8(int v)
         {
-            this.buffer.Add((byte)(v & 0xff));
+            buffer.Add((byte)(v & 0xff));
         }
 
         protected void writeInternal(ProtocolTreeNode node)
@@ -163,51 +162,51 @@ namespace WhatsAppApi.Helper
             {
                 len += 1;
             }
-            this.writeListStart(len);
-            this.writeString(node.tag);
-            this.writeAttributes(node.attributeHash);
+            writeListStart(len);
+            writeString(node.tag);
+            writeAttributes(node.attributeHash);
             if (node.data.Length > 0)
             {
-                this.writeBytes(node.data);
+                writeBytes(node.data);
             }
             if (node.children != null && node.children.Any())
             {
-                this.writeListStart(node.children.Count());
+                writeListStart(node.children.Count());
                 foreach (var item in node.children)
                 {
-                    this.writeInternal(item);
+                    writeInternal(item);
                 }
             }
         }
         protected void writeJid(string user, string server)
         {
-            this.buffer.Add(0xfa);
+            buffer.Add(0xfa);
             if (user.Length > 0)
             {
-                this.writeString(user);
+                writeString(user);
             }
             else
             {
-                this.writeToken(0);
+                writeToken(0);
             }
-            this.writeString(server);
+            writeString(server);
         }
 
         protected void writeListStart(int len)
         {
             if (len == 0)
             {
-                this.buffer.Add(0x00);
+                buffer.Add(0x00);
             }
             else if (len < 256)
             {
-                this.buffer.Add(0xf8);
-                this.writeInt8(len);
+                buffer.Add(0xf8);
+                writeInt8(len);
             }
             else
             {
-                this.buffer.Add(0xf9);
-                this.writeInt16(len);
+                buffer.Add(0xf9);
+                writeInt16(len);
             }
         }
 
@@ -219,32 +218,32 @@ namespace WhatsAppApi.Helper
             {
                 if (num >= 0)
                 {
-                    this.writeToken(num);
+                    writeToken(num);
                 }
-                this.writeToken(intValue);
+                writeToken(intValue);
                 return;
             }
             int num2 = tag.IndexOf('@');
             if (num2 < 1)
             {
-                this.writeBytes(tag);
+                writeBytes(tag);
                 return;
             }
             string server = tag.Substring(num2 + 1);
             string user = tag.Substring(0, num2);
-            this.writeJid(user, server);
+            writeJid(user, server);
         }
 
         protected void writeToken(int token)
         {
             if (token < 0xf5)
             {
-                this.buffer.Add((byte)token);
+                buffer.Add((byte)token);
             }
             else if (token <= 0x1f4)
             {
-                this.buffer.Add(0xfe);
-                this.buffer.Add((byte)(token - 0xf5));
+                buffer.Add(0xfe);
+                buffer.Add((byte)(token - 0xf5));
             }
         }
 
@@ -252,7 +251,7 @@ namespace WhatsAppApi.Helper
         {
             if (WhatsApp.DEBUG && debugMsg.Length > 0)
             {
-                Helper.DebugAdapter.Instance.fireOnPrintDebug(debugMsg);
+                DebugAdapter.Instance.fireOnPrintDebug(debugMsg);
             }
         }
     }

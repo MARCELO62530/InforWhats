@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Encoder = System.Drawing.Imaging.Encoder;
 
 namespace WhatsAppApi
 {
@@ -131,7 +133,7 @@ namespace WhatsAppApi
         protected byte[] CreateThumbnail(byte[] imageData)
         {
             Image image;
-            using (System.IO.MemoryStream m = new System.IO.MemoryStream(imageData))
+            using (MemoryStream m = new MemoryStream(imageData))
             {
                 image = Image.FromStream(m);
             }
@@ -155,13 +157,13 @@ namespace WhatsAppApi
                 Bitmap newImage = new Bitmap(newWidth, newHeight);
                 using (Graphics gr = Graphics.FromImage(newImage))
                 {
-                    gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                    gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                    gr.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                    gr.SmoothingMode = SmoothingMode.HighQuality;
+                    gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
                     gr.DrawImage(image, new Rectangle(0, 0, newWidth, newHeight));
                 }
-                System.IO.MemoryStream ms = new System.IO.MemoryStream();
-                newImage.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                MemoryStream ms = new MemoryStream();
+                newImage.Save(ms, ImageFormat.Jpeg);
                 ms.Close();
                 return ms.ToArray();
             }
@@ -187,7 +189,7 @@ namespace WhatsAppApi
         protected byte[] ProcessProfilePicture(byte[] bytes)
         {
             Bitmap image;
-            using (System.IO.MemoryStream m = new System.IO.MemoryStream(bytes))
+            using (MemoryStream m = new MemoryStream(bytes))
             {
                 image = new Bitmap(Image.FromStream(m));
             }
@@ -217,9 +219,9 @@ namespace WhatsAppApi
                 Bitmap newImage = new Bitmap(newWidth, newHeight);
                 using (Graphics gr = Graphics.FromImage(newImage))
                 {
-                    gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                    gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                    gr.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                    gr.SmoothingMode = SmoothingMode.HighQuality;
+                    gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
                     gr.DrawImage(image, new Rectangle(0, 0, newWidth, newHeight));
                 }
 
@@ -229,9 +231,9 @@ namespace WhatsAppApi
                     new Size(size, size)
                     ), image.PixelFormat);
 
-                System.IO.MemoryStream ms = new System.IO.MemoryStream();
+                MemoryStream ms = new MemoryStream();
 
-                System.Drawing.Imaging.Encoder enc = System.Drawing.Imaging.Encoder.Quality;
+                Encoder enc = Encoder.Quality;
                 EncoderParameters encParams = new EncoderParameters(1);
 
                 EncoderParameter param = new EncoderParameter(enc, 50L);
@@ -270,7 +272,7 @@ namespace WhatsAppApi
 
         public static string GetJID(string target)
         {
-            target = target.TrimStart(new char[] { '+', '0' });
+            target = target.TrimStart('+', '0');
             if (!target.Contains('@'))
             {
                 //check if group message

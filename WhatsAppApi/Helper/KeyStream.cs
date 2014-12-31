@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace WhatsAppApi.Helper
 {
@@ -16,16 +13,15 @@ namespace WhatsAppApi.Helper
 
         public KeyStream(byte[] key, byte[] macKey)
         {
-            this.rc4 = new RC4(key, 768);
-            this.mac = new HMACSHA1(macKey);
+            rc4 = new RC4(key, 768);
+            mac = new HMACSHA1(macKey);
         }
 
         public static byte[][] GenerateKeys(byte[] password, byte[] nonce)
         {
             byte[][] array = new byte[4][];
             byte[][] array2 = array;
-            byte[] array3 = new byte[]
-            {
+            byte[] array3 = {
                 1,
                 2,
                 3,
@@ -48,7 +44,7 @@ namespace WhatsAppApi.Helper
 
         public void DecodeMessage(byte[] buffer, int macOffset, int offset, int length)
         {
-            byte[] array = this.ComputeMac(buffer, offset, length);
+            byte[] array = ComputeMac(buffer, offset, length);
             for (int i = 0; i < 4; i++)
             {
                 if (buffer[macOffset + i] != array[i])
@@ -56,30 +52,29 @@ namespace WhatsAppApi.Helper
                     throw new Exception(string.Format("MAC mismatch on index {0}! {1} != {2}", i, buffer[macOffset + i], array[i]));
                 }
             }
-            this.rc4.Cipher(buffer, offset, length);
+            rc4.Cipher(buffer, offset, length);
         }
 
         public void EncodeMessage(byte[] buffer, int macOffset, int offset, int length)
         {
-            this.rc4.Cipher(buffer, offset, length);
-            byte[] array = this.ComputeMac(buffer, offset, length);
+            rc4.Cipher(buffer, offset, length);
+            byte[] array = ComputeMac(buffer, offset, length);
             Array.Copy(array, 0, buffer, macOffset, 4);
         }
 
         private byte[] ComputeMac(byte[] buffer, int offset, int length)
         {
-            this.mac.Initialize();
-            this.mac.TransformBlock(buffer, offset, length, buffer, offset);
-            byte[] array = new byte[]
-            {
-                (byte)(this.seq >> 24),
-                (byte)(this.seq >> 16),
-                (byte)(this.seq >> 8),
-                (byte)this.seq
+            mac.Initialize();
+            mac.TransformBlock(buffer, offset, length, buffer, offset);
+            byte[] array = {
+                (byte)(seq >> 24),
+                (byte)(seq >> 16),
+                (byte)(seq >> 8),
+                (byte)seq
             };
-            this.mac.TransformFinalBlock(array, 0, array.Length);
-            this.seq += 1u;
-            return this.mac.Hash;
+            mac.TransformFinalBlock(array, 0, array.Length);
+            seq += 1u;
+            return mac.Hash;
         }
     }
 }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace WhatsAppApi.Helper
 {
@@ -16,8 +13,8 @@ namespace WhatsAppApi.Helper
             {
                 throw new NullReferenceException();
             }
-            this.Key = key;
-            this.Value = value;
+            Key = key;
+            Value = value;
         }
     }
 }

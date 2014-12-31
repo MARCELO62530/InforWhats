@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Account\Credencial.cs" />
+    <Compile Include="Account\Pessoa.cs" />
     <Compile Include="Account\WhatsUser.cs" />
     <Compile Include="Account\WhatsUserManager.cs" />
     <Compile Include="Base\ApiBase.cs" />

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using WhatsAppApi.Settings;
-
-namespace WhatsAppApi.Account
+﻿namespace WhatsAppApi.Account
 {
     public class WhatsUser
     {
@@ -14,24 +8,24 @@ namespace WhatsAppApi.Account
 
         public WhatsUser(string jid, string srvUrl, string nickname = "")
         {
-            this.Jid = jid;
-            this.Nickname = nickname;
-            this.serverUrl = srvUrl;
+            Jid = jid;
+            Nickname = nickname;
+            serverUrl = srvUrl;
         }
 
         public string GetFullJid()
         {
-            return WhatsAppApi.WhatsApp.GetJID(this.Jid);
+            return WhatsApp.GetJID(Jid);
         }
 
         internal void SetServerUrl(string srvUrl)
         {
-            this.serverUrl = srvUrl;
+            serverUrl = srvUrl;
         }
 
         public override string ToString()
         {
-            return this.GetFullJid();
+            return GetFullJid();
         }
     }
 }

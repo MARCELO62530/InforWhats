@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Globalization;
 using System.Text;
 
 namespace WhatsAppApi.Helper
@@ -50,7 +49,7 @@ namespace WhatsAppApi.Helper
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i <= hexString.Length - 2; i += 2)
             {
-                sb.Append(Convert.ToString(Convert.ToChar(Int32.Parse(hexString.Substring(i, 2), System.Globalization.NumberStyles.HexNumber))));
+                sb.Append(Convert.ToString(Convert.ToChar(Int32.Parse(hexString.Substring(i, 2), NumberStyles.HexNumber))));
             }
             return sb.ToString();
         }

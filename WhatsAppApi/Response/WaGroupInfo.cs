@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace WhatsAppApi.Response
+﻿namespace WhatsAppApi.Response
 {
     public class WaGroupInfo
     {
@@ -25,7 +20,7 @@ namespace WhatsAppApi.Response
             this.owner = owner;
             long.TryParse(creation, out this.creation);
             this.subject = subject;
-            long.TryParse(subjectChanged, out this.subjectChangedTime);
+            long.TryParse(subjectChanged, out subjectChangedTime);
             this.subjectChangedBy = subjectChangedBy;
         }
     }

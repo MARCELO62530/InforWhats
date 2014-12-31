@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace WhatsAppApi.Parser
 {
@@ -15,7 +14,7 @@ namespace WhatsAppApi.Parser
         {
             get
             {
-                return this.CC + this.Number;
+                return CC + Number;
             }
         }
         public string ISO3166;
@@ -27,7 +26,7 @@ namespace WhatsAppApi.Parser
         {
             get
             {
-                return this._mcc.PadLeft(3, '0');
+                return _mcc.PadLeft(3, '0');
             }
         }
 
@@ -35,7 +34,7 @@ namespace WhatsAppApi.Parser
         {
             get
             {
-                return this._mnc.PadLeft(3, '0');
+                return _mnc.PadLeft(3, '0');
             }
         }
 
@@ -43,34 +42,34 @@ namespace WhatsAppApi.Parser
         {
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("WhatsAppApi.Parser.countries.csv"))
             {
-                using (var reader = new System.IO.StreamReader(stream))
+                using (var reader = new StreamReader(stream))
                 {
                     string csv = reader.ReadToEnd();
-                    string[] lines = csv.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] lines = csv.Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
                     foreach (string line in lines)
                     {
-                        string[] values = line.Trim(new char[] { '\r' }).Split(new char[] { ',' });
+                        string[] values = line.Trim('\r').Split(',');
                         //try to match
                         if (number.StartsWith(values[1]))
                         {
                             //matched
-                            this.Country = values[0].Trim(new char[] { '"' });
+                            Country = values[0].Trim('"');
                             //hook: Fix CC for North America
                             if (values[1].StartsWith("1"))
                             {
                                 values[1] = "1";
                             }
-                            this.CC = values[1];
-                            this.Number = number.Substring(this.CC.Length);
-                            this.ISO3166 = values[4].Trim(new char[] { '"' });
-                            this.ISO639 = values[5].Trim(new char[] { '"' });
-                            this._mcc = values[2].Trim(new char[] { '"' });
-                            this._mnc = values[3].Trim(new char[] { '"' });
-                            if (this._mcc.Contains('|'))
+                            CC = values[1];
+                            Number = number.Substring(CC.Length);
+                            ISO3166 = values[4].Trim('"');
+                            ISO639 = values[5].Trim('"');
+                            _mcc = values[2].Trim('"');
+                            _mnc = values[3].Trim('"');
+                            if (_mcc.Contains('|'))
                             {
                                 //take first one
-                                string[] parts = this._mcc.Split(new char[] { '|' });
-                                this._mcc = parts[0];
+                                string[] parts = _mcc.Split('|');
+                                _mcc = parts[0];
                             }
                             return;
                         }

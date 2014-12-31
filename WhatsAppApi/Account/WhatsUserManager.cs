@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using WhatsAppApi.Settings;
 
 namespace WhatsAppApi.Account
@@ -12,7 +9,7 @@ namespace WhatsAppApi.Account
 
         public WhatsUserManager()
         {
-            this.userList = new Dictionary<string, WhatsUser>();
+            userList = new Dictionary<string, WhatsUser>();
         }
 
         //public void AddUser(User user)
@@ -23,15 +20,15 @@ namespace WhatsAppApi.Account
 
         public WhatsUser CreateUser(string jid, string nickname = "")
         {
-            if (this.userList.ContainsKey(jid))
-                return this.userList[jid];
+            if (userList.ContainsKey(jid))
+                return userList[jid];
 
             string server = WhatsConstants.WhatsAppServer;
             if (jid.Contains("-"))
                 server = WhatsConstants.WhatsGroupChat;
 
             var tmpUser = new WhatsUser(jid, server, nickname);
-            this.userList.Add(jid, tmpUser);
+            userList.Add(jid, tmpUser);
             return tmpUser;
         }
     }

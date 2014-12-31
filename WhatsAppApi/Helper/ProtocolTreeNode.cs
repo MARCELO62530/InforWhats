@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace WhatsAppApi.Helper
 {
@@ -27,8 +26,8 @@ namespace WhatsAppApi.Helper
         {
             this.tag = tag ?? "";
             this.attributeHash = attributeHash ?? new KeyValue[0];
-            this.children = children != null ? new ProtocolTreeNode[] { children } : new ProtocolTreeNode[0];
-            this.data = new byte[0];
+            this.children = children != null ? new[] { children } : new ProtocolTreeNode[0];
+            data = new byte[0];
         }
 
         public ProtocolTreeNode(string tag, IEnumerable<KeyValue> attributeHash, byte[] data = null)
@@ -42,52 +41,52 @@ namespace WhatsAppApi.Helper
 
         public string NodeString(string indent = "")
         {
-            string ret = "\n" + indent + "<" + this.tag;
-            if (this.attributeHash != null)
+            string ret = "\n" + indent + "<" + tag;
+            if (attributeHash != null)
             {
-                foreach (var item in this.attributeHash)
+                foreach (var item in attributeHash)
                 {
                     ret += string.Format(" {0}=\"{1}\"", item.Key, item.Value);
                 }
             }
             ret += ">";
-            if (this.data.Length > 0)
+            if (data.Length > 0)
             {
-                if (this.data.Length <= 1024)
+                if (data.Length <= 1024)
                 {
-                    ret += WhatsApp.SYSEncoding.GetString(this.data);
+                    ret += WhatsApp.SYSEncoding.GetString(data);
                 }
                 else
                 {
-                    ret += string.Format("--{0} byte--", this.data.Length);
+                    ret += string.Format("--{0} byte--", data.Length);
                 }
             }
             
-            if (this.children != null && this.children.Count() > 0)
+            if (children != null && children.Count() > 0)
             {
-                foreach (var item in this.children)
+                foreach (var item in children)
                 {
                     ret += item.NodeString(indent + "  ");
                 }
                 ret += "\n" + indent;
             }
-            ret += "</" + this.tag + ">";
+            ret += "</" + tag + ">";
             return ret;
         }
 
         public string GetAttribute(string attribute)
         {
-            var ret = this.attributeHash.FirstOrDefault(x => x.Key.Equals(attribute));
+            var ret = attributeHash.FirstOrDefault(x => x.Key.Equals(attribute));
             return (ret == null) ? null : ret.Value;
         }
 
         public ProtocolTreeNode GetChild(string tag)
         {
-            if (this.children != null && this.children.Any())
+            if (children != null && children.Any())
             {
-                foreach (var item in this.children)
+                foreach (var item in children)
                 {
-                    if (ProtocolTreeNode.TagEquals(item, tag))
+                    if (TagEquals(item, tag))
                     {
                         return item;
                     }
@@ -104,9 +103,9 @@ namespace WhatsAppApi.Helper
         public IEnumerable<ProtocolTreeNode> GetAllChildren(string tag)
         {
             var tmpReturn = new List<ProtocolTreeNode>();
-            if (this.children != null && this.children.Any())
+            if (children != null && children.Any())
             {
-                foreach (var item in this.children)
+                foreach (var item in children)
                 {
                     if (tag.Equals(item.tag, StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -120,12 +119,12 @@ namespace WhatsAppApi.Helper
 
         public IEnumerable<ProtocolTreeNode> GetAllChildren()
         {
-            return this.children.ToArray();
+            return children.ToArray();
         }
 
         public byte[] GetData()
         {
-            return this.data;
+            return data;
         }
 
         public static bool TagEquals(ProtocolTreeNode node, string _string)

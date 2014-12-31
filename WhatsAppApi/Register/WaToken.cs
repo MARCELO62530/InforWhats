@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -15,9 +14,9 @@ namespace WhatsAppApi.Register
         {
             List<byte> key = new List<byte>(Convert.FromBase64String("/UIGKU1FVQa+ATM2A0za7G2KI9S/CwPYjgAbc67v7ep42eO/WeTLx1lb1cHwxpsEgF4+PmYpLd2YpGUdX/A2JQitsHzDwgcdBpUf7psX1BU="));
 
-            List<byte> data = new List<byte>(Convert.FromBase64String(WaToken.WaSignature));
-            data.AddRange(Convert.FromBase64String(WaToken.WaClassesMd5));
-            data.AddRange(System.Text.Encoding.ASCII.GetBytes(number));
+            List<byte> data = new List<byte>(Convert.FromBase64String(WaSignature));
+            data.AddRange(Convert.FromBase64String(WaClassesMd5));
+            data.AddRange(Encoding.ASCII.GetBytes(number));
 
             List<byte> opad = GetFilledList(0x5C, 64);
             List<byte> ipad = GetFilledList(0x36, 64);

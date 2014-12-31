@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
@@ -48,7 +49,7 @@ namespace WhatsAppApi.Register
                     id = GenerateIdentity(phoneNumber);
                 }
                 PhoneNumber pn = new PhoneNumber(phoneNumber);
-                string token = System.Uri.EscapeDataString(WhatsRegisterV2.GetToken(pn.Number));
+                string token = Uri.EscapeDataString(GetToken(pn.Number));
                 
                 request = string.Format("https://v.whatsapp.net/v2/code?cc={0}&in={1}&to={0}{1}&method={2}&mcc={3}&mnc={4}&token={5}&id={6}&lg={7}&lc={8}", pn.CC, pn.Number, method, pn.MCC, pn.MNC, token, id, pn.ISO639, pn.ISO3166);
                 response = GetResponse(request);
@@ -69,7 +70,7 @@ namespace WhatsAppApi.Register
         public static string RegisterCode(string phoneNumber, string code, string id = null)
         {
             string response = string.Empty;
-            return WhatsRegisterV2.RegisterCode(phoneNumber, code, out response, id);
+            return RegisterCode(phoneNumber, code, out response, id);
         }
 
         public static string RegisterCode(string phoneNumber, string code, out string response, string id = null)
@@ -135,7 +136,7 @@ namespace WhatsAppApi.Register
             request.KeepAlive = false;
             request.UserAgent = WhatsConstants.UserAgent;
             request.Accept = "text/json";
-            using (var reader = new System.IO.StreamReader(request.GetResponse().GetResponseStream()))
+            using (var reader = new StreamReader(request.GetResponse().GetResponseStream()))
             {
                 return reader.ReadLine();
             }
@@ -150,9 +151,9 @@ namespace WhatsAppApi.Register
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach (char c in data.ToCharArray())
+            foreach (char c in data)
             {
-                int i = (int)c;
+                int i = c;
                 if (
                     (
                         i >= 0 && i <= 31
@@ -195,7 +196,7 @@ namespace WhatsAppApi.Register
         {
             byte[] data = SHA1.Create().ComputeHash(Encoding.UTF8.GetBytes(s));
             string str = Encoding.GetEncoding("iso-8859-1").GetString(data);
-            str = WhatsRegisterV2.UrlEncode(str).ToLower();
+            str = UrlEncode(str).ToLower();
             return str;
         }
 
